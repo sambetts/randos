@@ -8,7 +8,7 @@
     }
   },
   "profiles": {
-    "SPO.ColdStorage.Web": {
+    "teamsify.app": {
       "commandName": "Project",
       "launchBrowser": true,
       "applicationUrl": "https://localhost:7132;http://localhost:5132",

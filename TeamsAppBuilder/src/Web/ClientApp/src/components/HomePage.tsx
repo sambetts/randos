@@ -36,11 +36,14 @@ export const HomePage: React.FC<{}> = () => {
       case Stage.SiteSelection:
         return <SelectSite siteSelected={(url: string) => siteSelect(url)} />;
       case Stage.VerifySite:
-        return <SitePreview url={url} siteConfirmed={() => setStage(Stage.EnterData)} siteCancel={() => setStage(Stage.SiteSelection)} />
+        return <SitePreview url={url} siteConfirmed={() => setStage(Stage.EnterData)} 
+          siteCancel={() => setStage(Stage.SiteSelection)} />
       case Stage.EnterData:
         return <AppDetailsForm detailsDone={(details: AppDetails) => appDetailsSet(details)} />
       case Stage.Download:
-        return <AppDownload details={appDetails!} url={url} startOver={()=> setStage(Stage.SiteSelection)} />
+        return <AppDownload details={appDetails!} url={url} 
+          startOver={()=> setStage(Stage.SiteSelection)} 
+          goBack={() => setStage(Stage.EnterData)} />
       default:
         return <p>No idea</p>;
     }
