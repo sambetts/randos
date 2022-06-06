@@ -7,48 +7,48 @@ import { AppDownload } from './TeamifyWeb/AppDownload';
 import { AppDetails } from '../models/AppDetails';
 
 
-export interface Stage {
-
+export enum Stage {
+  SiteSelection,
+  VerifySite,
+  EnterData,
+  Download
 }
 
 export const HomePage: React.FC<{}> = () => {
 
+  const [stage, setStage] = React.useState<Stage>(Stage.SiteSelection);
   const [url, setUrl] = React.useState<string>("");
-  const [siteConfirmed, setSiteConfirmed] = React.useState<boolean>(false);
-  const [appDetailsConfirmed, setAppDetailsConfirmed] = React.useState<boolean>(false);
   const [appDetails, setAppDetails] = React.useState<AppDetails | null>(null);
 
 
-  const siteSelectCancel = () =>
-  {
-    setSiteConfirmed(false);
-    setUrl("");
+  const siteSelect = (url: string) => {
+    setUrl(url);
+    setStage(Stage.VerifySite);
+  }
+
+  const appDetailsSet = (details: AppDetails) => {
+    setAppDetails(details);
+    setStage(Stage.Download);
+  }
+
+  const renderSwitch = (stage: Stage) => {
+    switch (stage) {
+      case Stage.SiteSelection:
+        return <SelectSite siteSelected={(url: string) => siteSelect(url)} />;
+      case Stage.VerifySite:
+        return <SitePreview url={url} siteConfirmed={() => setStage(Stage.EnterData)} siteCancel={() => setStage(Stage.SiteSelection)} />
+      case Stage.EnterData:
+        return <AppDetailsForm detailsDone={(details: AppDetails) => appDetailsSet(details)} />
+      case Stage.Download:
+        return <AppDownload details={appDetails!} url={url} startOver={()=> setStage(Stage.SiteSelection)} />
+      default:
+        return <p>No idea</p>;
+    }
   }
 
   return (
     <div>
-
-      {url === "" ?
-        <SelectSite siteSelected={(url: string) => setUrl(url)} /> 
-      :
-        <>
-        <p>{url}</p>
-          {!siteConfirmed ?
-
-            <SitePreview url={url} siteConfirmed={() => setSiteConfirmed(true)} siteCancel={() => siteSelectCancel()} />
-            :
-            <>
-              {!appDetailsConfirmed && appDetails != null ?
-                <AppDetailsForm detailsDone={(details: AppDetails) => setAppDetails(details)} />
-                :
-                <AppDownload details={appDetails!} url={url} />
-              }
-            </>
-
-          }
-        </>
-      }
-
+      {renderSwitch(stage)}
     </div>
   );
 };

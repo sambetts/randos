@@ -2,16 +2,27 @@ import '../NavMenu.css';
 import React from 'react';
 import { AppDetails } from '../../models/AppDetails';
 
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
+import { WizardButtons } from '../WizardButtons';
 
-export const AppDownload: React.FC<{details: AppDetails, url: string}> = (props) => {
+interface Props
+{
+  details: AppDetails, 
+  url: string,
+  startOver : Function
+}
+export const AppDownload: React.FC<Props> = (props) => {
+
+const downloadApp = () =>
+{
+
+}
 
   return (
     <div>
+      <p>You app is ready.</p>
 
-      <p>Download</p>
-
+      <WizardButtons nextClicked={() => props.startOver()} nextText="Start Over" 
+          previousText="Download App" previousClicked={() => downloadApp()} />
     </div>
   );
 };

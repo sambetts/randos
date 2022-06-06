@@ -1,7 +1,7 @@
 import '../NavMenu.css';
 import React from 'react';
 
-import Button from '@mui/material/Button';
+import { WizardButtons } from '../WizardButtons';
 
 export const SitePreview: React.FC<{url: string, siteConfirmed: Function, siteCancel: Function}> = (props) => {
 
@@ -13,9 +13,8 @@ export const SitePreview: React.FC<{url: string, siteConfirmed: Function, siteCa
 
       <iframe src={props.url} title="Preview" />
 
-      <Button type="submit" variant="outlined" size="large" onClick={() => props.siteConfirmed()}>Confirm</Button>
-      <Button type="submit" variant="outlined" size="large" onClick={() => props.siteCancel()}>Cancel</Button>
-
+      <WizardButtons nextClicked={() => props.siteConfirmed()} nextText="Confirm" 
+          previousText="Cancel" previousClicked={() => props.siteCancel()} />
     </div>
   );
 };
