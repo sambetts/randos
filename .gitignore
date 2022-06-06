@@ -8,3 +8,5 @@ TeamsAppBuilder/src/.vs
 TeamsAppBuilder/src/.vs/TeamsAppBuilder/v17/.suo
 TeamsAppBuilder/src/.vs/TeamsAppBuilder/v17/.suo
 /TeamsAppBuilder/src/packages
+/TeamsAppBuilder/src/ImagePreview/bin
+/TeamsAppBuilder/src/ImagePreview/obj/Debug

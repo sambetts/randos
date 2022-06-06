@@ -17,7 +17,8 @@ export const SelectSite: React.FC<{ siteSelected: Function }> = (props) => {
     <div>
 
       <p>This application is for adding your website as an app in Teams.</p>
-      <TextField type="url" value={url} onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e)} label="Add URL" required />
+      <TextField type="url" value={url} onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e)} 
+      label="Add URL" required fullWidth />
 
       <WizardButtons nextClicked={() => props.siteSelected(url)} nextText="Next" />
     </div>

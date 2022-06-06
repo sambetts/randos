@@ -1,4 +1,5 @@
 ﻿using Freezer.Core;
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -14,26 +15,18 @@ namespace ImagePreview.Controllers
         {
             // https://github.com/haga-rak/Freezer/wiki
             var screenshotJob = ScreenshotJobBuilder.Create(url)
-                          .SetBrowserSize(1366, 768)
+                          .SetBrowserSize(1024, 650)
                           .SetCaptureZone(CaptureZone.VisibleScreen) // Set what should be captured
                           .SetTrigger(new WindowLoadTrigger()); // Set when the picture is taken
 
-            var response = new HttpResponseMessage();
             var bytes = screenshotJob.Freeze();
+            var base64 = Convert.ToBase64String(bytes.AsBytes());
+            Console.WriteLine(base64.Length);
 
-            if (bytes != null)
-            {
-                response.StatusCode = HttpStatusCode.OK;
-                response.Content = new ByteArrayContent(bytes);
-
-                string contentDisposition = string.Concat("attachment; filename=", "screenshot.jpg");
-                response.Content.Headers.ContentDisposition =
-                              ContentDispositionHeaderValue.Parse(contentDisposition);
-
-                response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/octet-stream");
-            }
-            
+            var response = Request.CreateResponse(HttpStatusCode.OK);
+            response.Content = new StringContent(base64, System.Text.Encoding.UTF8);
             return response;
+
         }
 
     }

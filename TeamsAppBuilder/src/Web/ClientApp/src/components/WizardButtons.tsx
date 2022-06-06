@@ -25,7 +25,7 @@ export const WizardButtons: React.FC<Props> = (props) => {
   }
 
   return (
-    <div>
+    <div className='wizardButtons'>
       {props.previousText &&
         <Button type="submit" variant="outlined" size="large" onClick={() => previousClick()}>{props.previousText}</Button>
 
