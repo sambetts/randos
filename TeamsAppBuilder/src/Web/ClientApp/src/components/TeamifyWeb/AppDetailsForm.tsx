@@ -6,7 +6,7 @@ import { Grid } from '@mui/material';
 import { AppDetails } from '../models/WizardModels';
 import { WizardButtons } from '../WizardButtons';
 
-export const AppDetailsForm: React.FC<{ detailsDone: Function }> = (props) => {
+export const AppDetailsForm: React.FC<{ detailsDone: Function, cancel: Function }> = (props) => {
   const formRef = React.useRef<HTMLFormElement>(null);
 
   const formSave = () => {
@@ -27,8 +27,8 @@ export const AppDetailsForm: React.FC<{ detailsDone: Function }> = (props) => {
 
 
   return (
-    <form noValidate autoComplete="off" ref={formRef}>
-      <p>To make any Teams app, we need this information to build the manifest:</p>
+    <form autoComplete="off" ref={formRef}>
+      <p>To make any Teams app, we need this required information to build the manifest:</p>
 
       <Grid container>
         <Grid>
@@ -40,7 +40,7 @@ export const AppDetailsForm: React.FC<{ detailsDone: Function }> = (props) => {
           <TextField id="outlined-basic" label="Long name" required size='small' className='longField' />
         </Grid>
 
-        <Grid>
+        <Grid style={{marginTop: 20}}>
           <h3>Descriptions</h3>
           <p>Include both short and full descriptions of your app. The short description must be under 80 characters and not repeated in the full description.</p>
         </Grid>
@@ -49,7 +49,7 @@ export const AppDetailsForm: React.FC<{ detailsDone: Function }> = (props) => {
           <TextField id="outlined-basic" label="Full description (4000 characters or less)" required size='small' fullWidth  />
         </Grid>
         
-        <Grid>
+        <Grid style={{marginTop: 20}}>
           <h3>Developer/company information</h3>
           <p>Enter your developer or company name and website. Make sure the website is a valid https URL.</p>
         </Grid>
@@ -60,7 +60,8 @@ export const AppDetailsForm: React.FC<{ detailsDone: Function }> = (props) => {
         
       </Grid>
 
-      <WizardButtons nextClicked={() => formSave()} nextText="Save Info &amp; get app" />
+      <WizardButtons previousClicked={() => props.cancel()} previousText="Start Over" 
+        nextClicked={() => formSave()} nextText="Save Info &amp; get app" />
 
     </form>
   );

@@ -35,29 +35,31 @@ export const SitePreview: React.FC<{ url: string, siteConfirmed: Function, siteC
   }, [props.url]);
 
   return (
-    <div id='webPreview'>
+    <>
+      <div id='webPreview'>
 
-      <>
-        <p>How's it look?</p>
-        <img src='imgs/TeamsPreview.png' alt='Teams preview' />
+        <>
+          <img src='imgs/TeamsPreview.png' alt='Teams preview' />
 
-        <div className='previewWeb'>
-          {!loadError ?
-            <>
-              {imgPreview ?
-                <img src={imgPreview} alt="Preview" />
-                :
-                <div>Loading preview...</div>
-              }
-            </>
-            :
-            <div>Got error loading site preview. It's complicated.</div>
-          }
-        </div>
-      </>
+          <div className='previewWeb'>
+            {!loadError ?
+              <>
+                {imgPreview ?
+                  <img src={imgPreview} alt="Preview" />
+                  :
+                  <div>Loading preview...</div>
+                }
+              </>
+              :
+              <div>Got error loading site preview. It's complicated.</div>
+            }
+          </div>
+        </>
 
-      <WizardButtons nextClicked={() => props.siteConfirmed()} nextText="Confirm"
-        previousText="Cancel" previousClicked={() => props.siteCancel()} />
-    </div>
+      </div>
+      <WizardButtons nextClicked={() => props.siteConfirmed()} nextText="Looks Good - Build the App"
+        previousText="Go Back" previousClicked={() => props.siteCancel()} />
+    </>
+
   );
 };

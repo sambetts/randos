@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import Header from './Header';
-import { Stage } from './components/models/WizardModels';
+import { Stage } from './components/models/enums';
 
 function Copyright() {
   return (
@@ -23,7 +23,7 @@ let theme = createTheme({
   palette: {
     primary: {
       light: '#63ccff',
-      main: '#009be5',
+      main: '#43488F',
       dark: '#006db3',
     },
   },
@@ -176,10 +176,10 @@ export const Layout: React.FC<{stage: Stage}> = (props) => {
 
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <Header onDrawerToggle={handleDrawerToggle} stage={props.stage} />
-          <Box component="main" sx={{ flex: 1, py: 6, px: 4, bgcolor: '#eaeff1' }}>
+          <Box component="main" sx={{ flex: 1, py: 6, px: 4, bgcolor: '#F5F5F6' }}>
             {props.children}
           </Box>
-          <Box component="footer" sx={{ p: 2, bgcolor: '#eaeff1' }}>
+          <Box component="footer" sx={{ p: 2, bgcolor: '#F5F5F6' }}>
             <Copyright />
           </Box>
         </Box>

@@ -4,7 +4,8 @@ import { SelectSite } from './TeamifyWeb/SelectSite';
 import { SitePreview } from './TeamifyWeb/SitePreview';
 import { AppDetailsForm } from './TeamifyWeb/AppDetailsForm';
 import { AppDownload } from './TeamifyWeb/AppDownload';
-import { AppDetails, Stage } from './models/WizardModels';
+import { AppDetails } from './models/WizardModels';
+import { Stage } from './models/enums';
 
 
 export const HomePage: React.FC<{wizardStageChange: Function}> = (props) => {
@@ -38,7 +39,7 @@ export const HomePage: React.FC<{wizardStageChange: Function}> = (props) => {
         return <SitePreview url={url} siteConfirmed={() => setStage(Stage.EnterData)} 
           siteCancel={() => setStage(Stage.SiteSelection)} />
       case Stage.EnterData:
-        return <AppDetailsForm detailsDone={(details: AppDetails) => appDetailsSet(details)} />
+        return <AppDetailsForm detailsDone={(details: AppDetails) => appDetailsSet(details)} cancel={()=> setStage(Stage.SiteSelection)} />
       case Stage.Download:
         return <AppDownload details={appDetails!} url={url} 
           startOver={()=> setStage(Stage.SiteSelection)} 

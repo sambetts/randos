@@ -20,7 +20,7 @@ export const SelectSite: React.FC<{ siteSelected: Function }> = (props) => {
       <TextField type="url" value={url} onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e)} 
       label="Add URL" required fullWidth />
 
-      <WizardButtons nextClicked={() => props.siteSelected(url)} nextText="Next" />
+      <WizardButtons nextClicked={() => props.siteSelected(url)} nextText="Teamsify This Website" />
     </div>
   );
 };

@@ -20,30 +20,35 @@ code {
   text-decoration: underline;
   display: inline;
   margin: 0;
-  padding: 0;  
+  padding: 0;
   color: #0366d6;
 
 }
 
-.field{ width: 300px;}
-.longField
-{
+.field {
+  width: 300px;
+}
+
+.longField {
   width: 500px;
 }
 
-.previewWeb
-{
+.previewWeb {
   position: absolute;
-  top: 210px;
-  left: 180px;
+  top: 60px;
+  left: 65px;
 }
 
-.wizardButtons
-{
+.wizardButtons {
   margin-top: 20px;
+  position: absolute;
+  top: 650px;
 }
 
-#webPreview
-{
-  border: #E01A76;
+#webPreview {
+  position: absolute;
+  top: 50px;
+  left: 0;
+  width: 100%;
+  background-color: #F5F5F6;
 }

@@ -7,7 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import { Stage } from 'components/models/WizardModels';
+import { Stage } from './components/models/enums';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 
@@ -22,11 +22,11 @@ export default function Header(props: HeaderProps) {
   const renderSwitch = (stage: Stage) => {
     switch (stage) {
       case Stage.SiteSelection:
-        return <span>Webify</span>;
+        return <span>Teamsify Your Website</span>;
       case Stage.VerifySite:
         return <span>How does this look?</span>
       case Stage.EnterData:
-        return <span>Enter data</span>
+        return <span>Enter App &amp; Org Data</span>
       case Stage.Download:
         return <span>Download your App</span>
       default:
@@ -58,7 +58,7 @@ export default function Header(props: HeaderProps) {
                 color="inherit"
                 size="small"
               >
-                Teamsify you Website
+                How to Deploy
               </Button>
             </Grid>
             <Grid item>
