@@ -3,7 +3,7 @@ import React from 'react';
 import { AppDetails } from '../models/WizardModels';
 
 import { WizardButtons } from '../WizardButtons';
-import { Button, Hidden } from '@mui/material';
+import { Button } from '@mui/material';
 
 interface Props {
   sessionId: string,
@@ -56,11 +56,11 @@ export const AppDownload: React.FC<Props> = (props) => {
         style={{ marginTop: 50, marginBottom: 50 }}>Download Teams App Zip</Button>
 
       <p>You just need to deploy it to Teams.&nbsp;
-        <a href='https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/deploy-and-publish/apps-publish-overview' target='_blank'>It's super-easy.</a></p>
+        <a href='https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/deploy-and-publish/apps-publish-overview' rel="noreferrer" target='_blank'>It's super-easy.</a></p>
       <p>You can side-load the app, or if you have the right permissions, deploy to entire group(s) of users.</p>
       {downloadRedirectUrl &&
         <>
-          <iframe src={downloadRedirectUrl} className='Hidden' />
+          <iframe src={downloadRedirectUrl} className='Hidden' title='Redirect' />
         </>
       }
 
