@@ -4,19 +4,12 @@ import { SelectSite } from './TeamifyWeb/SelectSite';
 import { SitePreview } from './TeamifyWeb/SitePreview';
 import { AppDetailsForm } from './TeamifyWeb/AppDetailsForm';
 import { AppDownload } from './TeamifyWeb/AppDownload';
-import { AppDetails } from '../models/AppDetails';
+import { AppDetails, Stage } from './models/WizardModels';
 
 
-export enum Stage {
-  SiteSelection,
-  VerifySite,
-  EnterData,
-  Download
-}
+export const HomePage: React.FC<{wizardStageChange: Function}> = (props) => {
 
-export const HomePage: React.FC<{}> = () => {
-
-  const [stage, setStage] = React.useState<Stage>(Stage.SiteSelection);
+  const [currentStage, setCurrentStage] = React.useState<Stage>(Stage.SiteSelection);
   const [url, setUrl] = React.useState<string>("");
   const [appDetails, setAppDetails] = React.useState<AppDetails | null>(null);
 
@@ -29,6 +22,12 @@ export const HomePage: React.FC<{}> = () => {
   const appDetailsSet = (details: AppDetails) => {
     setAppDetails(details);
     setStage(Stage.Download);
+  }
+
+  const setStage = (stage: Stage) => 
+  {
+    setCurrentStage(stage);
+    props.wizardStageChange(stage);
   }
 
   const renderSwitch = (stage: Stage) => {
@@ -45,13 +44,13 @@ export const HomePage: React.FC<{}> = () => {
           startOver={()=> setStage(Stage.SiteSelection)} 
           goBack={() => setStage(Stage.EnterData)} />
       default:
-        return <p>No idea</p>;
+        return <p>No idea what to display</p>;
     }
   }
 
   return (
     <div>
-      {renderSwitch(stage)}
+      {renderSwitch(currentStage)}
     </div>
   );
 };

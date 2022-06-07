@@ -3,7 +3,7 @@ import React from 'react';
 
 import TextField from '@mui/material/TextField';
 import { Grid } from '@mui/material';
-import { AppDetails } from '../../models/AppDetails';
+import { AppDetails } from '../models/WizardModels';
 import { WizardButtons } from '../WizardButtons';
 
 export const AppDetailsForm: React.FC<{ detailsDone: Function }> = (props) => {

@@ -1,6 +1,6 @@
 import '../NavMenu.css';
 import React from 'react';
-import { AppDetails } from '../../models/AppDetails';
+import { AppDetails } from '../models/WizardModels';
 
 import { WizardButtons } from '../WizardButtons';
 import { Button } from '@mui/material';
