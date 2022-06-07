@@ -14,7 +14,7 @@ export const SitePreview: React.FC<{ url: string, siteConfirmed: Function, siteC
   }
 
   const loadImg = (imgBase64: string) => {
-    console.log(imgBase64);
+
     const imgSource = "data:image/png;base64, " + imgBase64;
     setImgPreview(imgSource);
 

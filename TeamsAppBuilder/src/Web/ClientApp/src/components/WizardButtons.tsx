@@ -6,7 +6,8 @@ interface Props {
   previousClicked?: Function,
   nextClicked?: Function,
   nextText?: string,
-  previousText?: string
+  previousText?: string,
+  disabled?: boolean
 }
 export const WizardButtons: React.FC<Props> = (props) => {
 
@@ -31,7 +32,7 @@ export const WizardButtons: React.FC<Props> = (props) => {
 
       }
       {props.nextText &&
-        <Button type="submit" variant="contained" size="large" onClick={() => nextClick()} style={{marginLeft: 10}}>{props.nextText}</Button>
+        <Button type="submit" variant="contained" disabled={props.disabled} size="large" onClick={() => nextClick()} style={{marginLeft: 10}}>{props.nextText}</Button>
 
       }
     </div>

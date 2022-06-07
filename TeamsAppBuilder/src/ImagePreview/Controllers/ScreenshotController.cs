@@ -6,7 +6,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Web.Http;
 
-namespace ImagePreview.Controllers
+namespace API.Controllers
 {
     public class ScreenshotController : ApiController
     {
@@ -17,11 +17,11 @@ namespace ImagePreview.Controllers
             // https://github.com/haga-rak/Freezer/wiki
             var screenshotJob = ScreenshotJobBuilder.Create(url)
                           .SetBrowserSize(800, 550)
-                          .SetCaptureZone(CaptureZone.VisibleScreen) // Set what should be captured
+                          .SetCaptureZone(CaptureZone.VisibleScreen)
                           .SetTrigger(new WindowLoadTrigger()); // Set when the picture is taken
 
             
-
+            // This engine isn't the most reliable, so we try a few times. It almost always works in the end.
             int retries = 0;
             Screenshot screenshot = null;
             while (screenshot == null && retries < 5)

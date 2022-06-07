@@ -16,11 +16,13 @@ export const HomePage: React.FC<{ wizardStageChange: Function }> = (props) => {
 
   const [currentStage, setCurrentStage] = React.useState<Stage>(Stage.Home);
   const [url, setUrl] = React.useState<string>("");
+  const [sessionId, setSessionId] = React.useState<string | null>(null);
   const [appDetails, setAppDetails] = React.useState<AppDetails | null>(null);
 
 
-  const siteSelect = (url: string) => {
+  const siteSelect = (url: string, sessionId: string) => {
     setUrl(url);
+    setSessionId(sessionId);
     setStage(Stage.VerifySite);
   }
 
@@ -58,23 +60,26 @@ export const HomePage: React.FC<{ wizardStageChange: Function }> = (props) => {
                 </tr>
               </table>
             </Grid>
-            <Grid container justifyContent="center" style={{marginTop: 20}}>
+            <Grid container justifyContent="center" style={{ marginTop: 20 }}>
               <Button variant="contained" size="large" onClick={() => setStage(Stage.SiteSelection)}>Start Wizard</Button>
             </Grid>
 
           </div>);
 
       case Stage.SiteSelection:
-        return <SelectSite siteSelected={(url: string) => siteSelect(url)} />;
+        return <SelectSite siteSelected={(url: string, sessionId: string) => siteSelect(url, sessionId)} />;
       case Stage.VerifySite:
         return <SitePreview url={url} siteConfirmed={() => setStage(Stage.EnterData)}
           siteCancel={() => setStage(Stage.Home)} />
       case Stage.EnterData:
         return <AppDetailsForm detailsDone={(details: AppDetails) => appDetailsSet(details)} cancel={() => setStage(Stage.Home)} />
       case Stage.Download:
-        return <AppDownload details={appDetails!} url={url}
-          startOver={() => setStage(Stage.Home)}
-          goBack={() => setStage(Stage.EnterData)} />
+        if (sessionId)
+          return <AppDownload details={appDetails!} url={url}
+            startOver={() => setStage(Stage.Home)}
+            goBack={() => setStage(Stage.EnterData)} sessionId={sessionId} />
+        else
+          return <p>Invalid session</p>
       default:
         return <p>No idea what to display</p>;
     }
