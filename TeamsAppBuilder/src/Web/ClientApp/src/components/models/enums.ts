@@ -1,7 +1,7 @@
 export const enum Stage {
-    SiteSelection,
-    VerifySite,
-    EnterData,
-    Download
-  }
-  
+  Home,
+  SiteSelection,
+  VerifySite,
+  EnterData,
+  Download
+}

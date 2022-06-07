@@ -31,7 +31,7 @@ export const WizardButtons: React.FC<Props> = (props) => {
 
       }
       {props.nextText &&
-        <Button type="submit" variant="outlined" size="large" onClick={() => nextClick()}>{props.nextText}</Button>
+        <Button type="submit" variant="contained" size="large" onClick={() => nextClick()} style={{marginLeft: 10}}>{props.nextText}</Button>
 
       }
     </div>

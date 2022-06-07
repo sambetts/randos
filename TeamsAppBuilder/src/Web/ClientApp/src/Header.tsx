@@ -21,6 +21,8 @@ export default function Header(props: HeaderProps) {
   
   const renderSwitch = (stage: Stage) => {
     switch (stage) {
+      case Stage.Home:
+        return <span>Teamsify.app - Teamsify Your Website</span>;
       case Stage.SiteSelection:
         return <span>Teamsify Your Website</span>;
       case Stage.VerifySite:

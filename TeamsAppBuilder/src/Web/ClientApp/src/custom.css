@@ -52,3 +52,9 @@ code {
   width: 100%;
   background-color: #F5F5F6;
 }
+
+.processInfoGraphic td
+{
+  width: 200px;
+text-align: center;
+}
