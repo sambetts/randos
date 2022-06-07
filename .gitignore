@@ -12,3 +12,7 @@ TeamsAppBuilder/src/.vs/TeamsAppBuilder/v17/.suo
 /TeamsAppBuilder/src/ImagePreview/obj/Debug
 /TeamsAppBuilder/src/UnitTests/bin/Debug
 /TeamsAppBuilder/src/UnitTests/obj/Debug
+/TeamsAppBuilder/src/API/bin
+/TeamsAppBuilder/src/API/obj/Debug
+/TeamsAppBuilder/src/API/API.csproj.user
+/TeamsAppBuilder/src/API/Web.config

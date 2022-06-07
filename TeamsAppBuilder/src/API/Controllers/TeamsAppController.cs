@@ -1,12 +1,14 @@
 ﻿using API.Models;
 using Azure;
 using Azure.Data.Tables;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
+using Azure.Storage.Sas;
 using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -16,16 +18,21 @@ namespace API.Controllers
     {
         const string TABLE_NAME = "Sessions";
         private TableClient _tableClient;
+        private BlobContainerClient _blobClient;
         public TeamsAppController()
         {
+            var connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["Storage"]?.ConnectionString;
             _tableClient = new TableClient(
-                System.Configuration.ConfigurationManager.ConnectionStrings["Storage"]?.ConnectionString,
+                connectionString,
                 TABLE_NAME);
+
+            _blobClient = new BlobContainerClient(connectionString, "manifests");
+
         }
 
         // POST api/TeamsApp/NewSession?captchaResponseOnPage={captchaResponseOnPage}
         [HttpPost]
-        public async Task<Guid> NewSession(string captchaResponseOnPage)
+        public async Task<HttpResponseMessage> NewSession(string captchaResponseOnPage)
         {
             // Validate recaptcha - https://developers.google.com/recaptcha/docs/verify
             var captchSecret = System.Configuration.ConfigurationManager.AppSettings["CaptchaSecret"];
@@ -33,18 +40,21 @@ namespace API.Controllers
             var httpClient = new HttpClient();
             var uri = $"https://www.google.com/recaptcha/api/siteverify?secret={captchSecret}&response={captchaResponseOnPage}";
 
-            var response = await httpClient.GetAsync(uri);
-            var responseBody = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
+            var recaptchaResponse = await httpClient.GetAsync(uri);
+            var recaptchaResponseBody = await recaptchaResponse.Content.ReadAsStringAsync();
+            if (!recaptchaResponse.IsSuccessStatusCode)
             {
                 throw new Exception("Captcha validation failed");
             }
-            var captchaResult = JsonConvert.DeserializeObject<CaptchaResponse>(responseBody);
+            var captchaResult = JsonConvert.DeserializeObject<CaptchaResponse>(recaptchaResponseBody);
 
             if (captchaResult.Success)
             {
                 // Generate new session now we know it's a human
-                return await GetNewSession();
+                var id = await GetNewSession();
+                var response = Request.CreateResponse(HttpStatusCode.OK);
+                response.Content = new StringContent(id.ToString());
+                return response;
             }
             else
             {
@@ -63,7 +73,7 @@ namespace API.Controllers
             return id;
         }
 
-        async Task<UserSession> GetSessionId(string sessionId)
+        async Task<UserSession> GetSessionFromCache(string sessionId)
         {
             Response<UserSession> entityResponse = null;
             try
@@ -94,34 +104,64 @@ namespace API.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest);
             }
 
-            var sesh = await GetSessionId(sessionId);
+            var sesh = await GetSessionFromCache(sessionId);
+
+            if (sesh == null) // No session with that ID
+                return Request.CreateResponse(HttpStatusCode.NotFound);
+
+            var manifest = appDetails.ToTeamsAppManifest(url);
+            var bytes = manifest.BuildZip(appDetails.EntityName);
+
+            // Save file to blob storage
+            await _blobClient.CreateIfNotExistsAsync();
+
+            var fileName = $"{DateTime.Now.Ticks}/{appDetails.EntityName}.zip";
+            Response<BlobContentInfo> manifestRef = null;
+            using (var ms = new MemoryStream(bytes))
+            {
+                manifestRef = await _blobClient.UploadBlobAsync(fileName, ms);
+            }
+
+            // Remember deets in cache
+            sesh.AppDetails = appDetails;
+            sesh.SavedManifestUrl = fileName;
+            await _tableClient.UpdateEntityAsync<UserSession>(sesh, sesh.ETag);
+
+            // Respond with filename
+            var response = Request.CreateResponse(HttpStatusCode.OK);
+            response.Content = new StringContent(fileName);
+            return response;
+        }
+
+        // GET api/TeamsApp/DownloadApp?fileUrl={fileUrl}&sessionId={sessionId}
+        [HttpGet]
+        public async Task<HttpResponseMessage> DownloadApp(string fileUrl, string sessionId)
+        {
+            if (string.IsNullOrEmpty(sessionId) || string.IsNullOrEmpty(fileUrl))
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
+            }
+
+            var sesh = await GetSessionFromCache(sessionId);
 
             if (sesh == null) // No session with that ID
                 return Request.CreateResponse(HttpStatusCode.NotFound);
 
 
-            // Save file
-
-
-            // Remember deets
-            sesh.AppDetails = appDetails;
-            await _tableClient.UpdateEntityAsync<UserSession>(sesh, sesh.ETag);
-
-
-            var response = Request.CreateResponse(HttpStatusCode.OK);
-            var manifest = appDetails.ToTeamsAppManifest(url);
-
-            byte[] bytes = manifest.BuildZip(appDetails.EntityName);
-            using (var stream = new MemoryStream(bytes))
+            var blob = _blobClient.GetBlobClient(fileUrl);
+            var exists = await blob.ExistsAsync();
+            if (!exists)
             {
-                response.Content = new StreamContent(stream);
-                response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-                response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
-                {
-                    FileName = $"{appDetails.EntityName}.zip"
-                };
-                return response;
+                return Request.CreateResponse(HttpStatusCode.NotFound);
             }
+
+            var url = blob.GenerateSasUri(BlobSasPermissions.Read, DateTimeOffset.Now.AddMinutes(2));
+
+            // Respond with filename
+            var response = Request.CreateResponse(HttpStatusCode.Moved);
+            response.Headers.Location = url;
+
+            return response;
         }
     }
 }

@@ -51,6 +51,12 @@
     <Reference Include="Azure.Data.Tables, Version=12.5.0.0, Culture=neutral, PublicKeyToken=92742159e12e44c8, processorArchitecture=MSIL">
       <HintPath>..\packages\Azure.Data.Tables.12.5.0\lib\netstandard2.0\Azure.Data.Tables.dll</HintPath>
     </Reference>
+    <Reference Include="Azure.Storage.Blobs, Version=12.10.0.0, Culture=neutral, PublicKeyToken=92742159e12e44c8, processorArchitecture=MSIL">
+      <HintPath>..\packages\Azure.Storage.Blobs.12.10.0\lib\netstandard2.0\Azure.Storage.Blobs.dll</HintPath>
+    </Reference>
+    <Reference Include="Azure.Storage.Common, Version=12.9.0.0, Culture=neutral, PublicKeyToken=92742159e12e44c8, processorArchitecture=MSIL">
+      <HintPath>..\packages\Azure.Storage.Common.12.9.0\lib\netstandard2.0\Azure.Storage.Common.dll</HintPath>
+    </Reference>
     <Reference Include="Freezer, Version=1.0.1.5, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Freezer.1.0.1.5\lib\net45\Freezer.dll</HintPath>
     </Reference>
@@ -241,6 +247,7 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
+    <Content Include="Web.Template.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

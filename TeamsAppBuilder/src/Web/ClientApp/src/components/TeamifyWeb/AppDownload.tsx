@@ -3,57 +3,69 @@ import React from 'react';
 import { AppDetails } from '../models/WizardModels';
 
 import { WizardButtons } from '../WizardButtons';
-import { Button } from '@mui/material';
+import { Button, Hidden } from '@mui/material';
 
-interface Props
-{
+interface Props {
   sessionId: string,
-  details: AppDetails, 
+  details: AppDetails,
   url: string,
-  startOver : Function,
-  goBack : Function
+  startOver: Function,
+  goBack: Function
 }
 export const AppDownload: React.FC<Props> = (props) => {
+  const [downloadRedirectUrl, setDownloadRedirectUrl] = React.useState<string | null>();
 
-const downloadApp = () =>
-{
-  console.log(JSON.stringify(props.details));
-  
-  fetch("https://localhost:44373/api/GetTeamsApp?url=" + props.url, 
-  { 
-    mode: 'cors', 
-    method: "POST" ,
-    headers: {
-      'Content-Type': 'application/json'
-      // 'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: JSON.stringify(props.details)
-  })
-  .then(res => {
-    res.text().then(body => {
-      if (!res.ok) {
-        handleError();
-      }
-    })
-  })
-  .catch(err => handleError());
-}
+  const downloadApp = () => {
+    console.log(JSON.stringify(props.details));
 
-const handleError = () => {
-  alert('Got an error loading the package. Check JavaScript console for more info.');
-}
+    fetch("https://localhost:44373/api/TeamsApp/CreateApp?url=" + props.url + "&sessionId=" + props.sessionId,
+      {
+        mode: 'cors',
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(props.details)
+      })
+      .then(res => {
+        res.text().then(body => {
+          if (!res.ok) {
+            handleError();
+          }
+          else {
+            // Response is a URL back to our service which will generate a redirect to blob storage if GET-ed
+            const downloadUrl: string = `https://localhost:44373/api/TeamsApp/DownloadApp?fileUrl=${body}&sessionId=${props.sessionId}`;
+            setDownloadRedirectUrl(downloadUrl);
+          }
+
+        })
+      })
+      .catch(err => handleError());
+  }
+
+  const handleError = () => {
+    alert('Got an error loading the package. Check JavaScript console for more info.');
+  }
 
   return (
     <div>
       <h3>Excellent!</h3>
       <p>You app '{props.details.shortName}' is ready to download and deploy to your Teams.</p>
-      
-      <Button type="submit" variant="outlined" size="large" onClick={() => downloadApp()} style={{marginTop: 50, marginBottom: 50}}>Download App</Button>
 
-      <p>You just need to deploy it to Teams. It's super-easy:</p>
-      
-      <WizardButtons nextClicked={() => props.startOver()} nextText="Start Over" 
-          previousText="Back" previousClicked={() => props.goBack()} />
+      <Button type="submit" variant="contained" size="large" onClick={() => downloadApp()}
+        style={{ marginTop: 50, marginBottom: 50 }}>Download Teams App Zip</Button>
+
+      <p>You just need to deploy it to Teams.&nbsp;
+        <a href='https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/deploy-and-publish/apps-publish-overview' target='_blank'>It's super-easy.</a></p>
+      <p>You can side-load the app, or if you have the right permissions, deploy to entire group(s) of users.</p>
+      {downloadRedirectUrl &&
+        <>
+          <iframe src={downloadRedirectUrl} className='Hidden' />
+        </>
+      }
+
+      <WizardButtons nextClicked={() => props.startOver()} nextText="Start Over"
+        previousText="Back" previousClicked={() => props.goBack()} />
     </div>
   );
 };

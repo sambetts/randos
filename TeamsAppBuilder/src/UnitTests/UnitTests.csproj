@@ -57,7 +57,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ImagePreview\API.csproj">
+    <ProjectReference Include="..\API\API.csproj">
       <Project>{d6fd2230-3d7f-4486-a2dd-431757cf90a2}</Project>
       <Name>API</Name>
     </ProjectReference>
