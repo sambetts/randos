@@ -51,9 +51,9 @@ namespace API.Controllers
             if (captchaResult.Success)
             {
                 // Generate new session now we know it's a human
-                var id = await GetNewSession();
+                var newSession = await UserSession.AddNewSessionToAzTable(_tableClient);
                 var response = Request.CreateResponse(HttpStatusCode.OK);
-                response.Content = new StringContent(id.ToString());
+                response.Content = new StringContent(newSession.RowKey.ToString());
                 return response;
             }
             else
@@ -62,38 +62,6 @@ namespace API.Controllers
             }
         }
 
-        private async Task<Guid> GetNewSession()
-        {
-            _tableClient.CreateIfNotExists();
-
-            var id = Guid.NewGuid();
-            var newRandomSession = new UserSession { PartitionKey = id.ToString() };
-            await _tableClient.AddEntityAsync(newRandomSession);
-
-            return id;
-        }
-
-        async Task<UserSession> GetSessionFromCache(string sessionId)
-        {
-            Response<UserSession> entityResponse = null;
-            try
-            {
-                entityResponse = await _tableClient.GetEntityAsync<UserSession>(sessionId, UserSession.RowKeyStaticVal);
-            }
-            catch (RequestFailedException ex)
-            {
-                if (ex.ErrorCode == "ResourceNotFound")
-                {
-                    return null;
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return entityResponse;
-        }
 
         // POST api/TeamsApp/CreateApp?url={url}&sessionId={sessionId}
         [HttpPost]
@@ -104,7 +72,7 @@ namespace API.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest);
             }
 
-            var sesh = await GetSessionFromCache(sessionId);
+            var sesh = await UserSession.GetSessionFromAzTable(sessionId, _tableClient);
 
             if (sesh == null) // No session with that ID
                 return Request.CreateResponse(HttpStatusCode.NotFound);
@@ -142,7 +110,7 @@ namespace API.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest);
             }
 
-            var sesh = await GetSessionFromCache(sessionId);
+            var sesh = await UserSession.GetSessionFromAzTable(sessionId, _tableClient);
 
             if (sesh == null) // No session with that ID
                 return Request.CreateResponse(HttpStatusCode.NotFound);

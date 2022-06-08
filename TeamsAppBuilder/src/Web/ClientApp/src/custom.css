@@ -53,8 +53,15 @@ code {
   background-color: #F5F5F6;
 }
 
-.processInfoGraphic td
+.processInfoGraphic .description
 {
-  width: 200px;
-text-align: center;
+  padding-right: 20px;
+}
+.processInfoGraphic .stepHeader
+{
+  font-weight: 600;
+}
+.processInfoGraphic .icon
+{
+  width: 42px;
 }

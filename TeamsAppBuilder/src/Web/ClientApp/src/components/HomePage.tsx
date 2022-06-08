@@ -7,10 +7,9 @@ import { AppDownload } from './TeamifyWeb/AppDownload';
 import { AppDetails } from './models/WizardModels';
 import { Stage } from './models/enums';
 import { Button, Grid } from '@mui/material';
-import BuildIcon from '@mui/icons-material/Build';
-import DownloadIcon from '@mui/icons-material/Download';
-import SettingsIcon from '@mui/icons-material/Settings';
-
+import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
+import BackupOutlinedIcon from '@mui/icons-material/BackupOutlined';
+import FormatListNumberedRtlOutlinedIcon from '@mui/icons-material/FormatListNumberedRtlOutlined';
 
 export const HomePage: React.FC<{ wizardStageChange: Function }> = (props) => {
 
@@ -41,27 +40,32 @@ export const HomePage: React.FC<{ wizardStageChange: Function }> = (props) => {
       case Stage.Home:
         return (
           <div>
-            <p>Add &amp; pin your website to Teams.</p>
+            <p>Add &amp; pin your website to Teams easily with Teamsify.</p>
             <img src='imgs/example.png' alt='Example Teamsified Website' />
             <p>Get your website added to Teams in 3 easy steps. 5 minutes tops.</p>
 
-            <Grid container alignItems="center" justifyContent="center">
+            <Grid container justifyContent="center">
 
               <table className='processInfoGraphic'>
                 <tr>
-                  <td>Build</td>
-                  <td>Download</td>
-                  <td>Deploy</td>
+                  <td className='icon'><FormatListNumberedRtlOutlinedIcon fontSize='large' /></td>
+                  <td className='stepHeader'>Configure</td>
+
+                  <td className='icon'><FileDownloadOutlinedIcon fontSize='large' /></td>
+                  <td className='stepHeader'>Download</td>
+
+                  <td className='icon'><BackupOutlinedIcon fontSize='large' /></td>
+                  <td className='stepHeader'>Deploy</td>
                 </tr>
                 <tr>
-                  <td><BuildIcon fontSize='large' /></td>
-                  <td><DownloadIcon fontSize='large' /></td>
-                  <td><SettingsIcon fontSize='large' /></td>
+                  <td colSpan={2} className="description">Configure your website for Teams</td>
+                  <td colSpan={2} className="description">Download Teams app generated</td>
+                  <td colSpan={2} className="description">Deploy to your Office 365/Teams tenant</td>
                 </tr>
               </table>
             </Grid>
             <Grid container justifyContent="center" style={{ marginTop: 20 }}>
-              <Button variant="contained" size="large" onClick={() => setStage(Stage.SiteSelection)}>Start Wizard</Button>
+              <Button variant="contained" size="large" onClick={() => setStage(Stage.SiteSelection)}>Start Teamsify Wizard</Button>
             </Grid>
 
           </div>);

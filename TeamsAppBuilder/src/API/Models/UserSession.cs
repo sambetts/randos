@@ -2,18 +2,16 @@
 using Azure.Data.Tables;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Web;
+using System.Threading.Tasks;
 
 namespace API.Models
 {
     public class UserSession : ITableEntity
     {
-        public string PartitionKey { get; set; }
-        public string RowKey { get => RowKeyStaticVal; set { } }
-        public static string RowKeyStaticVal => "Sessions";
+        public string PartitionKey { get => PartitionKeyStaticVal; set { } }
+        public string RowKey { get; set; }
+        public static string PartitionKeyStaticVal => "Sessions";
         public DateTimeOffset? Timestamp { get; set; } = DateTimeOffset.Now;
         public ETag ETag { get; set; }
 
@@ -44,5 +42,39 @@ namespace API.Models
         }
 
         public string SavedManifestUrl { get; set; } = string.Empty;
+
+
+        public static async Task<UserSession> AddNewSessionToAzTable(TableClient tableClient)
+        {
+            tableClient.CreateIfNotExists();
+
+            var id = Guid.NewGuid();
+            var newRandomSession = new UserSession { RowKey = id.ToString() };
+            await tableClient.AddEntityAsync(newRandomSession);
+
+            return newRandomSession;
+        }
+
+        public static async Task<UserSession> GetSessionFromAzTable(string sessionId, TableClient tableClient)
+        {
+            Response<UserSession> entityResponse = null;
+            try
+            {
+                entityResponse = await tableClient.GetEntityAsync<UserSession>(sessionId, UserSession.PartitionKeyStaticVal);
+            }
+            catch (RequestFailedException ex)
+            {
+                if (ex.ErrorCode == "ResourceNotFound")
+                {
+                    return null;
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return entityResponse;
+        }
     }
 }

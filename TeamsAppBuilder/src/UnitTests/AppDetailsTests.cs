@@ -14,6 +14,13 @@ namespace UnitTests
         }
 
         [TestMethod]
+        public void ToTeamsAppManifestTests()
+        {
+            var manifest = GetAppDetails().ToTeamsAppManifest("https://contoso.com");
+            Assert.IsTrue(manifest.StaticTabs.Count == 1);
+        }
+
+        [TestMethod]
         public void GenerateZipBytes()
         {
             var a = GetAppDetails();
