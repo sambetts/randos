@@ -66,7 +66,8 @@ export const AppDetailsForm: React.FC<{ detailsDone: Function, cancel: Function 
           <TextField id="standard-basic" label="Short description (80 characters or less)" required size='small' className='longField' inputProps={{ maxLength: 80 }}
             value={descShort} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDescShort((e.target as HTMLInputElement).value)}/>
           <TextField id="outlined-basic" label="Full description (4000 characters or less)" required size='small' fullWidth  inputProps={{ maxLength: 4000 }}
-            value={descLong} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDescLong((e.target as HTMLInputElement).value)}/>
+            value={descLong} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDescLong((e.target as HTMLInputElement).value)}
+            style={{marginTop: 20}}/>
         </Grid>
         
         <Grid style={{marginTop: 20}}>

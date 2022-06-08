@@ -60,7 +60,7 @@ namespace API.Models
             Response<UserSession> entityResponse = null;
             try
             {
-                entityResponse = await tableClient.GetEntityAsync<UserSession>(sessionId, UserSession.PartitionKeyStaticVal);
+                entityResponse = await tableClient.GetEntityAsync<UserSession>(UserSession.PartitionKeyStaticVal, sessionId);
             }
             catch (RequestFailedException ex)
             {
@@ -75,6 +75,11 @@ namespace API.Models
             }
 
             return entityResponse;
+        }
+
+        public async Task UpdateTableRecord(UserSessionTableClient tableClient)
+        {
+            await tableClient.UpdateEntityAsync<UserSession>(this, new ETag("*"));
         }
     }
 }

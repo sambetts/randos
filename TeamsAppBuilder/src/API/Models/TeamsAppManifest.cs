@@ -4,11 +4,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using System.Web;
 
 namespace API.Models
 {
+    // https://docs.microsoft.com/en-us/microsoftteams/platform/resources/schema/manifest-schema
     public class TeamsAppManifest
     {
 
@@ -57,7 +56,6 @@ namespace API.Models
 
         #region Classes
 
-        #endregion
         public class AppDescription
         {
             [JsonProperty("short")]
@@ -85,10 +83,10 @@ namespace API.Models
         public class AppIcons
         {
             [JsonProperty("color")]
-            public string Color { get; set; } = String.Empty;
+            public string Color => "color.png";
 
             [JsonProperty("outline")]
-            public string Outline { get; set; } = String.Empty;
+            public string Outline => "outline.png";
         }
 
         public class AppName
@@ -115,8 +113,9 @@ namespace API.Models
             public string WebsiteUrl { get; set; } = String.Empty;
 
             [JsonProperty("scopes")]
-            public List<string> Scopes { get; set; } = new List<string>();
+            public List<string> Scopes => new List<string>() { "personal" };
         }
+        #endregion
 
 
         /// <summary>
@@ -159,6 +158,4 @@ namespace API.Models
         }
 
     }
-    // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
-
 }

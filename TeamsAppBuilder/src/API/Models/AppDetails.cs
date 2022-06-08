@@ -1,4 +1,6 @@
-﻿namespace API.Models
+﻿using System;
+
+namespace API.Models
 {
     public class AppDetails
     {
@@ -21,6 +23,13 @@
         /// </summary>
         public TeamsAppManifest ToTeamsAppManifest(string appSiteUrl)
         {
+            if (!Uri.IsWellFormedUriString(appSiteUrl, UriKind.Absolute))
+            {
+                throw new ArgumentOutOfRangeException(nameof(appSiteUrl));
+            }
+
+            var uri = new Uri(appSiteUrl);
+
             var manifest = new TeamsAppManifest()
             {
                 Name = new TeamsAppManifest.AppName { Short = ShortName, Full = LongName },
@@ -34,7 +43,8 @@
                 Name = EntityName,
                 WebsiteUrl = appSiteUrl
             });
-
+            manifest.ValidDomains.Add(uri.Host);
+            manifest.PackageName = $"app.teamsify.{uri.Host}.{this.EntityName.ToLower()}";
             return manifest;
         }
     }

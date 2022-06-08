@@ -2,6 +2,7 @@ import '../NavMenu.css';
 import React, { useEffect } from 'react';
 
 import { WizardButtons } from '../WizardButtons';
+import { Rings } from 'react-loader-spinner';
 
 export const SitePreview: React.FC<{ url: string, siteConfirmed: Function, siteCancel: Function }> = (props) => {
 
@@ -47,7 +48,7 @@ export const SitePreview: React.FC<{ url: string, siteConfirmed: Function, siteC
                 {imgPreview ?
                   <img src={imgPreview} alt="Preview" />
                   :
-                  <div>Loading preview...</div>
+                  <Rings ariaLabel="loading-indicator" color='#43488F' />
                 }
               </>
               :

@@ -1,7 +1,5 @@
 ﻿using API.Models;
 using Azure;
-using Azure.Data.Tables;
-using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Sas;
 using Newtonsoft.Json;
@@ -16,18 +14,14 @@ namespace API.Controllers
 {
     public class TeamsAppController : ApiController
     {
-        const string TABLE_NAME = "Sessions";
-        private TableClient _tableClient;
-        private BlobContainerClient _blobClient;
+        private UserSessionTableClient _tableClient;
+        private UserManifestsBlobContainerClient _blobClient;
         public TeamsAppController()
         {
             var connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["Storage"]?.ConnectionString;
-            _tableClient = new TableClient(
-                connectionString,
-                TABLE_NAME);
 
-            _blobClient = new BlobContainerClient(connectionString, "manifests");
-
+            _tableClient = new UserSessionTableClient(connectionString);
+            _blobClient = new UserManifestsBlobContainerClient(connectionString);
         }
 
         // POST api/TeamsApp/NewSession?captchaResponseOnPage={captchaResponseOnPage}
@@ -53,7 +47,9 @@ namespace API.Controllers
                 // Generate new session now we know it's a human
                 var newSession = await UserSession.AddNewSessionToAzTable(_tableClient);
                 var response = Request.CreateResponse(HttpStatusCode.OK);
-                response.Content = new StringContent(newSession.RowKey.ToString());
+
+                // Return session ID to JS app
+                response.Content = new StringContent(newSession.RowKey);
                 return response;
             }
             else
@@ -93,7 +89,7 @@ namespace API.Controllers
             // Remember deets in cache
             sesh.AppDetails = appDetails;
             sesh.SavedManifestUrl = fileName;
-            await _tableClient.UpdateEntityAsync<UserSession>(sesh, sesh.ETag);
+            await sesh.UpdateTableRecord(_tableClient);
 
             // Respond with filename
             var response = Request.CreateResponse(HttpStatusCode.OK);
