@@ -3,18 +3,20 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
 import Header from './Header';
 import { Stage } from './components/models/enums';
+import { Grid } from '@mui/material';
 
 function Copyright() {
   return (
     <Typography variant="body2" color="text.secondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://teamsify.app/">
-        Teamsify
-      </Link>{' '}
-      {new Date().getFullYear()}.
+      <Grid container alignItems="center">
+        <Grid item>
+          <object data="imgs/github.svg" width="32" height="32" style={{ display: "block" }}>GitHub Logo</object>
+        </Grid>
+        <Grid item><a href='' style={{textDecoration: 'none'}}>Project on GitHub</a>
+        </Grid>
+      </Grid>
     </Typography>
   );
 }
@@ -162,7 +164,7 @@ theme = {
   },
 };
 
-export const Layout: React.FC<{stage: Stage}> = (props) => {
+export const Layout: React.FC<{ stage: Stage }> = (props) => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
   const handleDrawerToggle = () => {

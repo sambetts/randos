@@ -1,12 +1,13 @@
-import '../NavMenu.css';
 import React from 'react';
 
 import TextField from '@mui/material/TextField';
 import { WizardButtons } from '../WizardButtons';
-import ReCAPTCHA from "react-google-recaptcha";
 import { Rings } from "react-loader-spinner";
+import { Captcha } from 'components/Captcha';
 
 export const SelectSite: React.FC<{ siteSelected: Function }> = (props) => {
+
+  const apiRoot: string | undefined = process.env.REACT_APP_API_BASE;
 
   const [captchaValue, setCaptchaValue] = React.useState<string | null>();
   const [url, setUrl] = React.useState<string>("");
@@ -29,7 +30,7 @@ export const SelectSite: React.FC<{ siteSelected: Function }> = (props) => {
 
     if (!error) {
       setIsLoading(true);
-      fetch("https://localhost:44373/api/TeamsApp/NewSession?captchaResponseOnPage=" + captchaValue, {
+      fetch(apiRoot + "/api/TeamsApp/NewSession?captchaResponseOnPage=" + captchaValue, {
         mode: 'cors',
         method: "POST"
       })
@@ -67,10 +68,7 @@ export const SelectSite: React.FC<{ siteSelected: Function }> = (props) => {
 
         <p style={{fontSize: 12}}>Please note: this should be a website owned by your organisation.</p>
         <p style={{ marginTop: 20 }}>Confirm you are a real person:</p>
-        <ReCAPTCHA
-          sitekey="6LfheE8gAAAAAEMxyPAefAz2CYRdB1kJRKmT9fHM"
-          onChange={onCapChange}
-        />
+        <Captcha onChange={onCapChange} />
 
         <p style={{marginTop: 50}}>Next we'll take a photo of the page...</p>
         {!isLoading ?

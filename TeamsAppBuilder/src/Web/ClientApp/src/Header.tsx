@@ -8,6 +8,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { Stage } from './components/models/enums';
+import { NavLink, useLocation } from 'react-router-dom';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 
@@ -18,7 +19,7 @@ interface HeaderProps {
 
 export default function Header(props: HeaderProps) {
 
-  
+
   const renderSwitch = (stage: Stage) => {
     switch (stage) {
       case Stage.Home:
@@ -35,10 +36,10 @@ export default function Header(props: HeaderProps) {
         return <p>No idea what to display</p>;
     }
   }
-
+  const location = useLocation();
   return (
     <React.Fragment>
-      
+
       <AppBar
         component="div"
         color="primary"
@@ -49,24 +50,39 @@ export default function Header(props: HeaderProps) {
         <Toolbar>
           <Grid container alignItems="center" spacing={1}>
             <Grid item xs>
+
               <Typography color="inherit" variant="h5" component="h1">
-                {renderSwitch(props.stage)}
+                {location.pathname === '/DeployGuide' ?
+                  <><NavLink to='/'style={{color: "white"}}>Home</NavLink> &gt; How to Deploy Teams Apps</>
+                  :
+                  <>
+                    {location.pathname === '/Contact' ?
+                    <><NavLink to='/'style={{color: "white"}}>Home</NavLink> &gt; Get in Touch</>
+                      :
+                      <>{renderSwitch(props.stage)}</>
+                    }
+                  </>
+                }
               </Typography>
             </Grid>
             <Grid item>
-              <Button
-                sx={{ borderColor: lightColor }}
-                variant="outlined"
-                color="inherit"
-                size="small"
-              >
-                How to Deploy
-              </Button>
+              <NavLink to='/DeployGuide'>
+                <Button
+                  sx={{ borderColor: lightColor }}
+                  variant="outlined"
+                  style={{ color: "white" }}
+                  size="small"
+                >
+                  How to Deploy
+                </Button>
+              </NavLink>
             </Grid>
             <Grid item>
               <Tooltip title="Help">
                 <IconButton color="inherit">
-                  <HelpIcon />
+                  <NavLink to='/Contact'>
+                    <HelpIcon style={{ color: "white" }} />
+                  </NavLink>
                 </IconButton>
               </Tooltip>
             </Grid>

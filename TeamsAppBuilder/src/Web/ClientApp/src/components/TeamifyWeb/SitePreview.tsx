@@ -1,4 +1,3 @@
-import '../NavMenu.css';
 import React, { useEffect } from 'react';
 
 import { WizardButtons } from '../WizardButtons';

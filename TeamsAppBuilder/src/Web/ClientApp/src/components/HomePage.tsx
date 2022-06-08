@@ -1,4 +1,3 @@
-import './NavMenu.css';
 import React from 'react';
 import { SelectSite } from './TeamifyWeb/SelectSite';
 import { SitePreview } from './TeamifyWeb/SitePreview';
@@ -35,6 +34,7 @@ export const HomePage: React.FC<{ wizardStageChange: Function }> = (props) => {
     props.wizardStageChange(stage);
   }
 
+
   const renderSwitch = (stage: Stage) => {
     switch (stage) {
       case Stage.Home:
@@ -47,21 +47,23 @@ export const HomePage: React.FC<{ wizardStageChange: Function }> = (props) => {
             <Grid container justifyContent="center">
 
               <table className='processInfoGraphic'>
-                <tr>
-                  <td className='icon'><FormatListNumberedRtlOutlinedIcon fontSize='large' /></td>
-                  <td className='stepHeader'>Configure</td>
+                <tbody>
+                  <tr>
+                    <td className='icon'><FormatListNumberedRtlOutlinedIcon fontSize='large' /></td>
+                    <td className='stepHeader'>Configure</td>
 
-                  <td className='icon'><FileDownloadOutlinedIcon fontSize='large' /></td>
-                  <td className='stepHeader'>Download</td>
+                    <td className='icon'><FileDownloadOutlinedIcon fontSize='large' /></td>
+                    <td className='stepHeader'>Download</td>
 
-                  <td className='icon'><BackupOutlinedIcon fontSize='large' /></td>
-                  <td className='stepHeader'>Deploy</td>
-                </tr>
-                <tr>
-                  <td colSpan={2} className="description">Configure your website for Teams</td>
-                  <td colSpan={2} className="description">Download Teams app generated</td>
-                  <td colSpan={2} className="description">Deploy to your Office 365/Teams tenant</td>
-                </tr>
+                    <td className='icon'><BackupOutlinedIcon fontSize='large' /></td>
+                    <td className='stepHeader'>Deploy</td>
+                  </tr>
+                  <tr>
+                    <td colSpan={2} className="description">Configure your website for Teams</td>
+                    <td colSpan={2} className="description">Download Teams app generated</td>
+                    <td colSpan={2} className="description">Deploy to your Office 365/Teams tenant</td>
+                  </tr>
+                </tbody>
               </table>
             </Grid>
             <Grid container justifyContent="center" style={{ marginTop: 20 }}>

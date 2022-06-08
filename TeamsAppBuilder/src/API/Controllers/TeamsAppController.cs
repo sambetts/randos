@@ -3,6 +3,8 @@ using Azure;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Sas;
 using Newtonsoft.Json;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 using System;
 using System.IO;
 using System.Net;
@@ -16,33 +18,23 @@ namespace API.Controllers
     {
         private UserSessionTableClient _tableClient;
         private UserManifestsBlobContainerClient _blobClient;
+        private CaptchaManager _captchaManager;
         public TeamsAppController()
         {
             var connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["Storage"]?.ConnectionString;
 
             _tableClient = new UserSessionTableClient(connectionString);
             _blobClient = new UserManifestsBlobContainerClient(connectionString);
+            _captchaManager = new CaptchaManager(System.Configuration.ConfigurationManager.AppSettings["CaptchaSecret"]);
         }
 
         // POST api/TeamsApp/NewSession?captchaResponseOnPage={captchaResponseOnPage}
         [HttpPost]
         public async Task<HttpResponseMessage> NewSession(string captchaResponseOnPage)
         {
-            // Validate recaptcha - https://developers.google.com/recaptcha/docs/verify
-            var captchSecret = System.Configuration.ConfigurationManager.AppSettings["CaptchaSecret"];
+            var validCaptcha = await _captchaManager.Verify(captchaResponseOnPage);
 
-            var httpClient = new HttpClient();
-            var uri = $"https://www.google.com/recaptcha/api/siteverify?secret={captchSecret}&response={captchaResponseOnPage}";
-
-            var recaptchaResponse = await httpClient.GetAsync(uri);
-            var recaptchaResponseBody = await recaptchaResponse.Content.ReadAsStringAsync();
-            if (!recaptchaResponse.IsSuccessStatusCode)
-            {
-                throw new Exception("Captcha validation failed");
-            }
-            var captchaResult = JsonConvert.DeserializeObject<CaptchaResponse>(recaptchaResponseBody);
-
-            if (captchaResult.Success)
+            if (validCaptcha)
             {
                 // Generate new session now we know it's a human
                 var newSession = await UserSession.AddNewSessionToAzTable(_tableClient);
@@ -51,6 +43,37 @@ namespace API.Controllers
                 // Return session ID to JS app
                 response.Content = new StringContent(newSession.RowKey);
                 return response;
+            }
+            else
+            {
+                throw new Exception("Captcha validation failed");
+            }
+        }
+
+        // POST api/TeamsApp/Contact?captchaResponseOnPage={captchaResponseOnPage}
+        [HttpPost]
+        public async Task<IHttpActionResult> Contact([FromBody] EmailMessage emailMessage, string captchaResponseOnPage)
+        {
+            if (emailMessage == null || !emailMessage.IsValid)
+            {
+                return BadRequest();
+            }
+            var validCaptcha = await _captchaManager.Verify(captchaResponseOnPage);
+            if (validCaptcha)
+            {
+                var client = new SendGridClient(System.Configuration.ConfigurationManager.AppSettings["SendGridApiKey"]);
+
+                var from = System.Configuration.ConfigurationManager.AppSettings["EmailsFrom"];
+                var to = System.Configuration.ConfigurationManager.AppSettings["EmailsTo"];
+                var msg = emailMessage.ToSendGridMessage(to, from); 
+
+                var response = await client.SendEmailAsync(msg);
+                var responseBody = await response.Body.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception($"Contact command failed with response '{response.StatusCode}' {responseBody}.");
+                return
+                    Ok(responseBody);
             }
             else
             {
