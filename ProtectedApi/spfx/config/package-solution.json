@@ -1,0 +1,54 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "protected-api-spfx-client-side-solution",
+    "id": "aa6f24a5-8e4f-421f-9773-24bfe75fa63b",
+    "version": "1.0.0.4",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "webApiPermissionRequests": [
+      {
+        "resource": "ProtectedSpfxApi",
+        "scope": "api://c0225ba5-3297-4e5e-afed-4e24ef3fa7d4/access_as_user"
+      },
+      {
+        "resource": "Microsoft Graph",
+        "scope": "User.ReadBasic.All"
+      },
+      {
+        "resource": "Microsoft Graph",
+        "scope": "Mail.ReadBasic"
+      }
+    ],
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.14.0"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "protected-api-spfx description"
+      },
+      "longDescription": {
+        "default": "protected-api-spfx description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "protected-api-spfx Feature",
+        "description": "The feature that activates elements of the protected-api-spfx solution.",
+        "id": "a3363975-90cb-4bc1-8a97-816462741258",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/protected-api-spfx.sppkg"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "plusBeta": false,
+    "isCreatingSolution": true,
+    "version": "1.14.0",
+    "libraryName": "protected-api-spfx",
+    "libraryId": "aa6f24a5-8e4f-421f-9773-24bfe75fa63b",
+    "environment": "spo",
+    "packageManager": "npm",
+    "solutionName": "protected-api-spfx",
+    "solutionShortDescription": "protected-api-spfx description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "componentType": "webpart"
+  }
+}

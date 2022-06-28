@@ -16,3 +16,8 @@ TeamsAppBuilder/src/.vs/TeamsAppBuilder/v17/.suo
 /TeamsAppBuilder/src/API/obj/Debug
 /TeamsAppBuilder/src/API/API.csproj.user
 /TeamsAppBuilder/src/API/Web.config
+/ProtectedApi/.vs
+/ProtectedApi/ProtectedApi/.config
+/ProtectedApi/ProtectedApi/bin/Debug/net6.0
+/ProtectedApi/ProtectedApi/obj
+/ProtectedApi/spfx/.vscode
