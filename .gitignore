@@ -21,3 +21,6 @@ TeamsAppBuilder/src/.vs/TeamsAppBuilder/v17/.suo
 /ProtectedApi/ProtectedApi/bin/Debug/net6.0
 /ProtectedApi/ProtectedApi/obj
 /ProtectedApi/spfx/.vscode
+/CritsitManager/.vscode
+/CritsitManager/bot/.env.teamsfx.local
+/CritsitManager/build/appPackage
