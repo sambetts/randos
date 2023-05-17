@@ -24,3 +24,4 @@ TeamsAppBuilder/src/.vs/TeamsAppBuilder/v17/.suo
 /CritsitManager/.vscode
 /CritsitManager/bot/.env.teamsfx.local
 /CritsitManager/build/appPackage
+CritsitManager/.fx/states/local.userdata
