@@ -1,0 +1,106 @@
+﻿@page "/{DebateTitleWebSafe}"
+
+@using Models
+@using Models.Entities
+
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
+@inject ModelFactory.Config.ClientSideKeyVaultSettings KeyVaultSettings
+@inject Microsoft.Identity.Web.ITokenAcquisition tokenAcquisition
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+@if (_model != null)
+{
+    <h3>@_model.Debate.Title</h3>
+
+    <p>@_model.RandomIntro</p>
+    <p style="font-style: italic; font-weight: 600">"@_model.Debate.RootAnswerWithRating.Body"</p>
+
+    <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+        <MudTabPanel Text="Stats">
+
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">Current Winner: @_model.Debate.Winner.DisplayName</MudPaper>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">Players: @_model.Debate.PlayerRanking.Count</MudPaper>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">Replies: @_model.Debate.AnswerCount</MudPaper>
+                </MudItem>
+            </MudGrid>
+
+        </MudTabPanel>
+        <MudTabPanel Text="Debate">
+
+            <Web.Shared.Debates.AnswersList Model="@_model.Debate.RootAnswerWithRating.ChildAnswersWithRatings"
+                                        ReplyTo="(id) => StartReplyTo(id)" Authenticated="true"
+                                        RefreshNeeded="async () => await ReloadDebate()" API="API" />
+            @*httpContextAccessor.HttpContext.User.Identity.IsAuthenticated*@
+        </MudTabPanel>
+    </MudTabs>
+
+    <Web.Shared.Debates.AnswersList Model="@_model.Debate.RootAnswerWithRating.ChildAnswersWithRatings"
+                                ReplyTo="(id) => StartReplyTo(id)" Authenticated="true"
+                                RefreshNeeded="async () => await ReloadDebate()" API="API" />
+
+    @if (ReplyParent != null)
+    {
+        <Web.Shared.Debates.AddNewAnswer ClosePopup="ClosePopup"
+                                 ReplyParent="this.ReplyParent"
+                                 Client="API"
+                                 AllResponseTypes="_responseTypes"
+                                 Added="ReloadDebate" />
+    }
+}
+else
+{
+    <p>Loading the beef...</p>
+}
+
+@code {
+
+    [Parameter] public string DebateTitleWebSafe { get; set; }
+
+    public AnswerDataOnlyTreeNode ReplyParent { get; set; }
+
+    public ApiClient API { get; set; }
+    DebateDetailsPage _model = null;
+    DebateUser _user = null;
+    List<ResponseType> _responseTypes = null;
+
+    void StartReplyTo(AnswerDataOnlyTreeNode id)
+    {
+        ReplyParent = id;
+    }
+    void ClosePopup()
+    {
+        ReplyParent = null;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+        {
+            var scopesToAccessDownstreamApi = new string[] { "https://whosright.onmicrosoft.com/ca09d93b-6ffe-4bb5-a53b-3ddf1edeee0b/access" };
+
+            string accessToken = await tokenAcquisition.GetAccessTokenForUserAsync(scopesToAccessDownstreamApi);
+            API = new ApiClient(accessToken, KeyVaultSettings.BackendApiBaseUrl);
+            _user = await API.EnsureUser();
+        }
+        else
+        {
+            API = new ApiClient(KeyVaultSettings.BackendApiBaseUrl);
+        }
+
+        _responseTypes = await API.GetResponseTypes();
+
+        await ReloadDebate();
+    }
+
+    async Task ReloadDebate()
+    {
+        _model = await API.GetDebateFromWebSafeName(DebateTitleWebSafe);
+
+    }
+}

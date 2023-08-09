@@ -1,0 +1,12 @@
+﻿@if (Value > 0)
+{
+    <span>+@Value</span>
+}
+else
+{
+    <span>@Value</span>
+}
+
+@code {
+    [Parameter] public int Value { get; set; }
+}

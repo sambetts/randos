@@ -1,0 +1,38 @@
+[
+  {
+    "Description": "Give points for answers longer than 5 chars",
+    "Condition": {
+      "Property": "Title.Length",
+      "LogicalOp": "GreaterThan",
+      "Value": 5
+    },
+    "Reaction": {
+      "PointsModifier": 5,
+      "Message": "Not a short title"
+    }
+  },
+  {
+    "Description": "Don't sit on the fence (no opinion, negative or positive)",
+    "Condition": {
+      "Property": "ReactionToParent.AgreeWithParent",
+      "LogicalOp": "equals",
+      "Value": null
+    },
+    "Reaction": {
+      "PointsModifier": -1,
+      "Message": "Nothing added to the debate. Agree/disagree"
+    }
+  },
+  {
+    "Description": "Have an opinion",
+    "Condition": {
+      "Property": "ReactionToParent.AgreeWithParent",
+      "LogicalOp": "notequals",
+      "Value": null
+    },
+    "Reaction": {
+      "PointsModifier": 1,
+      "Message": "Added an opinion"
+    }
+  }
+]

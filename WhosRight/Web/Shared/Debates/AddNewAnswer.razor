@@ -1,0 +1,117 @@
+﻿@using Models
+@inherits JavaScriptEnabledComponentBase;
+
+<div class="modal" tabindex="-1" style="display:block" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Reply to @ReplyParent.Title</h3>
+                <!-- Button to close the popup -->
+                <button type="button" class="close" @onclick="ClosePopup">
+                    <span aria-hidden="true">X</span>
+                </button>
+            </div>
+            <!-- Edit form for the current forecast -->
+            <div class="modal-body">
+
+                <div class="form-group">
+                    <label for="txtTitle">Title:</label>
+                    <input type="text" @bind-value="this.Title" class="form-control" id="txtTitle" />
+                </div>
+
+                <div class="form-group">
+                    <label for="comment">Body:</label>
+                    <textarea class="form-control" @oninput="HandleOnChange" rows="5" id="comment">@Body</textarea>
+                </div>
+
+
+                <select @onchange="HandleResponseTypeOnChange">
+                    @{
+                        int i = 0;
+                    };
+                    @foreach (var type in this.AllResponseTypes)
+                    {
+                        if (i == 0)
+                        {
+                            <option selected value="@type.ID">@type.ResponseText</option>
+                        }
+                        else
+                        {
+                            <option value="@type.ID">@type.ResponseText</option>
+                        }
+                        i++;
+                    }
+                </select>
+
+                <br />
+                <!-- Button to save the forecast -->
+                <button class="btn btn-primary" @onclick="SaveReply" disabled="@_isBusy">
+                    Save
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    [Parameter] public AnswerDataOnlyTreeNode ReplyParent { get; set; }
+    [Parameter] public ApiClient Client { get; set; }
+    [Parameter] public EventCallback ClosePopup { get; set; }
+    [Parameter] public List<ResponseType> AllResponseTypes { get; set; } = new List<ResponseType>();
+    [Parameter] public EventCallback Added { get; set; }
+
+    private bool _isBusy = false;
+    public int ReactionId { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string Body { get; set; } = string.Empty;
+
+    private void HandleOnChange(ChangeEventArgs args)
+    {
+        this.Body = args.Value.ToString();
+    }
+    private void HandleResponseTypeOnChange(ChangeEventArgs args)
+    {
+        int id = 0;
+        if (int.TryParse(args.Value?.ToString(), out id))
+        {
+            this.ReactionId = id;
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        if (AllResponseTypes.Count > 0)
+        {
+            ReactionId = AllResponseTypes[0].ID;
+        }
+        base.OnInitialized();
+    }
+
+    async Task SaveReply()
+    {
+        _isBusy = true;
+        var result = await Client.Reply(new NewAnswerDTO
+            {
+                Title = Title,
+                Body = Body,
+                ParentAnswerID = ReplyParent.ID,
+                ReactionIDToParent = ReactionId
+            });
+        if (result.IsSuccessStatusCode)
+        {
+            await ClosePopupClick();
+            await this.Added.InvokeAsync();
+        }
+        else
+        {
+            await base.ShowJSError(result);
+        }
+        _isBusy = false;
+    }
+
+    async Task ClosePopupClick()
+    {
+        await ClosePopup.InvokeAsync();
+    }
+}

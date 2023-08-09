@@ -1,0 +1,29 @@
+﻿@using Models
+
+@using Microsoft.AspNetCore.Identity
+
+
+@if (Model.Any())
+{
+    @foreach (var answerWithRating in Model)
+    {
+
+        <Answer Model="@answerWithRating" ReplyTo="(id) => StartReplyTo(id)"
+            RefreshNeeded="async () => await RefreshNeeded.InvokeAsync()"
+            Authenticated="this.Authenticated" API="API" />
+
+    }
+}
+@code {
+    [Parameter] public List<AnswerWithRatingsTreeNode> Model { get; set; }
+    [Parameter] public bool Authenticated { get; set; } = false;
+    [Parameter] public EventCallback<AnswerDataOnlyTreeNode> ReplyTo { get; set; }
+    [Parameter] public EventCallback RefreshNeeded { get; set; }
+    [Parameter] public ApiClient API { get; set; }
+
+    public async Task StartReplyTo(AnswerDataOnlyTreeNode id)
+    {
+        await ReplyTo.InvokeAsync(id);
+    }
+}
+

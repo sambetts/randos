@@ -1,0 +1,46 @@
+﻿@page "/"
+@using Web.Shared.Debates
+@using Models
+@using Models.Views
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor httpContextAccessor
+@inject TokenProvider TokenProvider
+@inject ModelFactory.Config.ClientSideKeyVaultSettings KeyVaultSettings
+
+<h1>Debates List</h1>
+
+
+@if (_model == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table>
+        @foreach (var debate in _model.Debates)
+        {
+            <tr>
+                <td>
+                    @{string url = $"{debate.TitleWebSafe}";}
+                    <NavLink class="nav-link" href="@url">
+                        @debate.Title
+                    </NavLink>
+                </td>
+            </tr>
+        }
+    </table>
+
+}
+
+
+
+@code {
+    private HomePageModel _model;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var client = new ApiClient(TokenProvider?.AccessToken, KeyVaultSettings.BackendApiBaseUrl);
+
+        _model = await client.GetHomePageModel();
+    }
+}

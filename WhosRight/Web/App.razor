@@ -1,0 +1,28 @@
+@inject TokenProvider TokenProvider
+
+
+<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@true">
+        <Found Context="routeData">
+            <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        </Found>
+        <NotFound>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <p>Sorry, there's nothing at this address.</p>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>
+
+@code
+{
+    [Parameter] public string AccessToken { get; set; }
+
+    protected override void OnInitialized()
+    {
+        //Accept the parameter from _Host.cshtml and move into the Token Provider 
+        TokenProvider.AccessToken = AccessToken;
+        base.OnInitialized();
+    }
+
+}

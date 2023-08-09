@@ -1,0 +1,89 @@
+﻿@using Models
+@inherits JavaScriptEnabledComponentBase;
+
+<div class="answer" id="@Model.ID">
+
+    <div class="answerHeader">
+        <span class="userName">@Model.CreatedBy.DisplayName:</span>
+        <span class="reactionToParent @ReactionClassName">(@Model.ReactionToParent.ResponseText)</span>
+        <span class="score"><a href="javascript:void(0);" class="scoreLink" @onclick="() => ShowSummary = !ShowSummary"><Score Value=Model.TotalScore /> points</a></span>
+
+    </div>
+    @if (ShowSummary && Model.RatingsGenerated != null)
+    {
+        <div class="scoreSummary">
+            <ul>
+                @foreach (var rating in Model.RatingsGenerated)
+                {
+                    <li>@rating.Reason: <Score Value=rating.Score /></li>
+                }
+            </ul>
+        </div>
+    }
+
+    <div>
+        <MudText Typo="Typo.body1">@Model.Title</MudText>
+        <MudText Typo="Typo.body2">@((MarkupString)Model.Body)</MudText>
+    </div>
+    @if (Authenticated)
+    {
+        <div class="threadControls">
+            <MudLink Href="javascript:void(0);" class="replyToAnswer" @onclick="() => StartReplyTo(Model)">reply</MudLink>
+            <MudLink Href="javascript:void(0);" class="replyToAnswer" @onclick="() => Delete(Model)">delete</MudLink>
+        </div>
+    }
+
+    <AnswersList Model="@Model.ChildAnswersWithRatings" ReplyTo="(id) => StartReplyTo(id)" 
+        RefreshNeeded="async () => await RefreshNeeded.InvokeAsync()"
+        Authenticated="this.Authenticated" API="API" />
+</div>
+
+@code {
+    bool ShowSummary { get; set; } = false;
+
+    [Parameter] public ApiClient API { get; set; }
+    [Parameter] public AnswerWithRatingsTreeNode Model { get; set; }
+    [Parameter] public bool Authenticated { get; set; } = false;
+
+    [Parameter] public EventCallback<AnswerDataOnlyTreeNode> ReplyTo { get; set; }
+    [Parameter] public EventCallback RefreshNeeded { get; set; }
+
+    string ReactionClassName
+    {
+        get
+        {
+            var className = "neutral";
+
+            // Select reaction CSS
+            if (Model.ReactionToParent.AgreeWithParent == true)
+            {
+                className = "agree";
+            }
+            else if (Model.ReactionToParent.AgreeWithParent == false)
+            {
+                className = "notagree";
+            }
+
+            return className;
+        }
+    }
+
+    public async Task StartReplyTo(AnswerDataOnlyTreeNode answer)
+    {
+        await ReplyTo.InvokeAsync(answer);
+    }
+
+    public async Task Delete(AnswerDataOnlyTreeNode answer)
+    {
+        var result = await API.Delete(answer);
+        if (result.IsSuccessStatusCode)
+        {
+            await RefreshNeeded.InvokeAsync();
+        }
+        else
+        {
+            await base.ShowJSError(result);
+        }
+    }
+
+}
